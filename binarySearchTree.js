@@ -72,9 +72,66 @@ class Tree{
         }
     }
 
+    isIn(value,root=this.root){;
+        if (root===null){
+            return(false)
+        }
+        else{
+            if (root.value===value){
+                return(true);
+            }
+            else{
+                return(this.isIn(value,root.left)|| this.isIn(value, root.right))
+            }
+        }
+    }
 
-    deleteItem(value){
-        
+    getSuccessor(curr){
+        curr=curr.right;
+        while(curr !== null && curr.left !== null){
+            curr=curr.left;
+        }
+        return(curr);
+    }
+
+
+    deleteItem(value,root=this.root){
+        let lastParent=root;
+        if (root !==null){
+            if (this.isIn(value,root)===true){
+                while(root.value !==value){
+                    if (value<root.value){
+                        lastParent=root;
+                        root=root.left;
+                    }
+                    else{
+                        lastParent=root;
+                        root=root.right;
+                    }
+                }
+                if (root.right===null){
+                    if (value<lastParent.value){
+                        lastParent.left=root.left
+                    }
+                    else{
+                        lastParent.right=root.left;
+                    }
+                }
+                else if (root.left===null){
+                    if (value<lastParent.value){
+                        lastParent.left=root.right;
+                    }
+                    else{
+                        lastParent.right=root.right;
+                    }
+                }
+                else{
+                    let successorValue=this.getSuccessor(root).value;
+                    root.value=successorValue;
+                    this.deleteItem(successorValue, root.right);
+                }  
+            }
+        }
     }
 
 }
@@ -101,5 +158,6 @@ a.buildTree([45,1,2,89,32,112,46,78,8,453,8900]);
 //console.log(a.root.value);
 
 a.insert(65);
+a.deleteItem(112);
 
 prettyPrint(a.root);
