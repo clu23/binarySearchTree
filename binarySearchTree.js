@@ -42,34 +42,33 @@ class Tree{
 
 
     insert(value){
-        let root=this.root;
-        let lastParent=root;
-        if (root===null){
-            this.root=new Node(value);
+        let newNode=new Node(value);
+        if (this.root===null){
+            this.root=newNode;
         }
         else{
-            while (root !==null){
-                if (value<root.value){
-                    lastParent=root;
-                    root=root.left
-                }
-                else if (value>root.value){
-                    lastParent=root;
-                    root=root.right;
-                }
-                else {
-                    break
-                }
+            this.insertNode(this.root,newNode)
+        }
+    }
+
+    insertNode(node, newNode){
+        if (newNode.value<node.value){
+            if (node.left===null){
+                node.left=newNode;
             }
-            if (root===null){
-                if (value<lastParent.value){
-                    lastParent.left=new Node(value);
-                }
-                else if (value>lastParent.value){
-                    lastParent.right= new Node (value);
-                }
+            else{
+                this.insertNode(node.left, newNode);
             }
         }
+        else{
+            if(node.right===null){
+                node.right=newNode;
+            }
+            else{
+                this.insertNode(node.right, newNode);
+            }
+        }
+
     }
 
     isIn(value,root=this.root){;
@@ -134,6 +133,121 @@ class Tree{
         }
     }
 
+
+    find(value){
+        if (!this.isIn(value)){
+            return(null);
+        }
+        else{
+            let node=this.root;
+            while(node.value !==value){
+                if (this.isIn(value,node.left)){
+                    node=node.left;
+                }
+                else{
+                    node=node.right;
+                }
+            }
+            return(node);
+        }
+    }
+
+    levelOrder(callback,node){
+        if (callback===undefined){
+            throw new Error('A callback function is required!');
+        }
+        else{
+            let queue=[this.root]
+            while(queue.length>0){
+                queue[0]=callback(queue[0]);
+                if (queue[0].left !== null){
+                    queue.push(queue[0].left);
+                }
+                if (queue[0].right !==null){
+                    queue.push(queue[0].right);
+                }
+                queue=queue.slice(1);
+            }
+        }
+    }
+
+    inOrder(callback, node=this.root){
+        if (callback===undefined){
+            throw new Error('A callback function is required!');
+        }
+        else{
+            if (node !==null){
+                this.inOrder(callback,node.left);
+                node=callback(node);
+                this.inOrder(callback,node.right);
+            }
+        }
+    }
+
+    preOrder(callback, node=this.root){
+        if (callback===undefined){
+            throw new Error('A callback function is required!');
+        }
+        else{
+            if (node !==null){
+                node=callback(node);
+                this.preOrder(callback,node.left);
+                this.preOrder(callback,node.right);
+            }
+        }
+    }
+
+    postOrder(callback, node=this.root){
+        if (callback===undefined){
+            throw new Error('A callback function is required!');
+        }
+        else{
+            if (node !==null){
+                this.postOrder(callback,node.left);
+                this.postOrder(callback,node.right);
+                node=callback(node);
+            }
+        }
+    }
+
+
+    height(node){
+        if (node===null){
+            return(0);
+        }
+        else{
+            let leftHeight=0;
+            let rightHeight=0;
+            if (node.left !==null){
+                leftHeight=1+this.height(node.left);
+            }
+            if (node.right !==null){
+                rightHeight=1+this.height(node.right);
+            }
+            return(Math.max(leftHeight,rightHeight))
+        }
+    }
+
+    depth(node, root=this.root){
+        if (node == root){
+            return(0)
+        }
+        else{
+            if (node !== null){
+                if (this.isIn(node.value,root.left)){
+                    return(1+this.depth(node,root.left))
+                }
+                else{
+                    return(1+this.depth(node,root.right))
+                }
+            }
+        }
+    }
+
+    isBalanced(){
+        
+    }
+
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -150,6 +264,12 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
   };
 
 
+
+function mutliply(node){
+    node.value=2*node.value;
+    return(node);
+}
+
 a= new Tree();
 
 
@@ -161,3 +281,5 @@ a.insert(65);
 a.deleteItem(112);
 
 prettyPrint(a.root);
+
+console.log(a.depth(a.root.right.left.left))
