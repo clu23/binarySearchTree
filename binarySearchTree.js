@@ -245,7 +245,14 @@ class Tree{
     }
 
     isBalanced(){
-        
+        let leftSize=this.height(this.root.left);
+        let rightSize=this.height(this.root.right);
+        if (Math.abs(leftSize-rightSize)>1){
+            return(false);
+        }
+        else{
+            return(true);
+        }
     }
 
 }
@@ -282,4 +289,4 @@ a.deleteItem(112);
 
 prettyPrint(a.root);
 
-console.log(a.depth(a.root.right.left.left))
+console.log(a.isBalanced())
