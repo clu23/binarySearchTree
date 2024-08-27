@@ -40,6 +40,43 @@ class Tree{
         }
     }
 
+
+    insert(value){
+        let root=this.root;
+        let lastParent=root;
+        if (root===null){
+            this.root=new Node(value);
+        }
+        else{
+            while (root !==null){
+                if (value<root.value){
+                    lastParent=root;
+                    root=root.left
+                }
+                else if (value>root.value){
+                    lastParent=root;
+                    root=root.right;
+                }
+                else {
+                    break
+                }
+            }
+            if (root===null){
+                if (value<lastParent.value){
+                    lastParent.left=new Node(value);
+                }
+                else if (value>lastParent.value){
+                    lastParent.right= new Node (value);
+                }
+            }
+        }
+    }
+
+
+    deleteItem(value){
+        
+    }
+
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -61,7 +98,8 @@ a= new Tree();
 
 
 a.buildTree([45,1,2,89,32,112,46,78,8,453,8900]);
+//console.log(a.root.value);
 
-
+a.insert(65);
 
 prettyPrint(a.root);
