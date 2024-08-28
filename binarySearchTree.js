@@ -13,8 +13,8 @@ class Node{
 
 class Tree{
 
-    constructor(){
-        this.root=null;
+    constructor(array){
+        this.root=this.buildTree(array);
     }
 
     buildTree(array){
@@ -41,35 +41,27 @@ class Tree{
     }
 
 
-    insert(value){
+    insert(value,root=this.root){
         let newNode=new Node(value);
-        if (this.root===null){
-            this.root=newNode;
+        if (root===null){
+            root=newNode;
         }
         else{
-            this.insertNode(this.root,newNode)
-        }
-    }
-
-    insertNode(node, newNode){
-        if (newNode.value<node.value){
-            if (node.left===null){
-                node.left=newNode;
+            if(root.value===value){
+                return
             }
             else{
-                this.insertNode(node.left, newNode);
+                if(value<root.value){
+                    root.left=this.insert(value,root.left);
+                }
+                else{
+                    root.right=this.insert(value, root.right);
+                }
             }
         }
-        else{
-            if(node.right===null){
-                node.right=newNode;
-            }
-            else{
-                this.insertNode(node.right, newNode);
-            }
-        }
-
+        return(root);
     }
+
 
     isIn(value,root=this.root){;
         if (root===null){
@@ -157,7 +149,7 @@ class Tree{
             throw new Error('A callback function is required!');
         }
         else{
-            let queue=[this.root]
+            let queue=[this.root];
             while(queue.length>0){
                 queue[0]=callback(queue[0]);
                 if (queue[0].left !== null){
@@ -255,6 +247,26 @@ class Tree{
         }
     }
 
+    rebalance(){
+        if (!this.isBalanced()){
+            let nodeList=[this.root];
+            let valueList=[];
+            while(nodeList.length>0){
+                valueList.push(nodeList[0].value);
+                if (nodeList[0].left !== null){
+                    nodeList.push(nodeList[0].left);
+                }
+                if (nodeList[0].right !==null){
+                    nodeList.push(nodeList[0].right);
+                }
+                nodeList=nodeList.slice(1);
+            }
+            if (valueList.length>0){
+                this.root=this.buildTree(valueList);
+            }
+        }
+    }
+
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -272,21 +284,27 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 
 
 
-function mutliply(node){
+function multiply(node){
     node.value=2*node.value;
     return(node);
 }
 
-a= new Tree();
+function printValue(node){
+    console.log(node.value)
+    return(node)
+}
 
 
+// randomly generated N = 40 length array 0 <= A[N] <= 100
+randomArray=Array.from({length: 40}, () => Math.floor(Math.random() * 100));
 
-a.buildTree([45,1,2,89,32,112,46,78,8,453,8900]);
-//console.log(a.root.value);
 
-a.insert(65);
-a.deleteItem(112);
-
-prettyPrint(a.root);
+a= new Tree(randomArray);
 
 console.log(a.isBalanced())
+
+
+
+
+
+
